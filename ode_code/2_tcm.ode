@@ -1,0 +1,15 @@
+init u=4e+08, v=0.31, i=0
+param beta=4.71e-08, delta=1.07, p=3.07, c=2.4, detection=100
+
+# Original Response
+u'=-beta*u*v
+i'=beta*u*v-delta*i
+v'=p*i-c*v
+
+aux logV=log10(detection)+heav(v-detection)*(log10(v)-log10(detection))
+
+@ total=30, dt=0.1, method=stiff
+@ bounds=1000000000
+@ NPLOT=1, yp1=logV
+
+done

@@ -1,0 +1,23 @@
+init u=4e+08, i=0, cyto=0.01
+init v=0.31, tcell=1e+06
+param beta=4.71e-08, delta=1.07
+param p=8.57, K=4e+08, c=2.4, ct=1.89e-06, st=1e+05, r=0.194, kt=1.26e+05, m=2, deltat=0.1 detection=100, factor=0.01
+param lc=20, kc=5, yc=0.5, mc=0.7, storm=10000, km=100
+param epsilon3=1, t_start=2
+ 
+# Original Response
+u'=-beta*u*v
+i'=beta*u*v+beta*tcell*v*(factor)-delta*i
+v'=p*v*(1-(v/K))-ct*v*tcell-c*v
+tcell'=st+r*tcell*((v^m)/((v^m)+(kt^m)))+lc*cyto-deltat*tcell-beta*tcell*v*(factor)
+cyto'=(1+epsilon3*heav(t-t_start))*((kc*i)/(1+yc*v)+(storm*(cyto^m)/((cyto^m)+(km^m))))-mc*cyto
+
+aux logV=log10(detection)+heav(v-detection)*(log10(v+1e-08)-log10(detection))
+aux logtcell=6+heav(tcell-1e+06)*(log10(tcell)-6)
+aux logcyto = log10(cyto)
+
+@ total=20, dt=0.05, method=stiff
+@ bounds=1e+20
+@ NPLOT=1, yp1=logV
+
+done

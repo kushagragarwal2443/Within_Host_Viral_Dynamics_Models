@@ -1,0 +1,33 @@
+# init f=1, v=21.8
+init f=1, v=0.0014, ff=1, vv=0.0014, fff=1, vvv=0.0014, ffff=1, vvvv=0.0014
+# param beta=0.0000677, gamma=4.55, delta=1.59
+param beta=0.00000655, gamma=3.89, delta=1.65, epsilon1=0.0, epsilon2=0.5, epsilon3=0.5, epsilon4=0.5, t_start=4, detection=14.6
+
+# Original Response
+f'=-(1-epsilon1*heav(t-t_start))*beta*f*v
+v'=(1-epsilon1*heav(t-t_start))*gamma*f*v-delta*v
+
+# With De novo Infection
+ff'=-(1-epsilon2*heav(t-t_start))*beta*ff*vv
+vv'=(1-epsilon2*heav(t-t_start))*gamma*ff*vv-delta*vv
+
+# With Blocking of Virus Production
+fff'=-beta*fff*vvv
+vvv'=(1-epsilon3*heav(t-t_start))*gamma*fff*vvv-delta*vvv
+
+# With Promoting Cytotoxicity
+ffff'=-beta*ffff*vvvv
+vvvv'=gamma*ffff*vvvv-(1+epsilon4*heav(t-t_start))*delta*vvvv
+
+aux logV=log10(detection)+heav(v-detection)*(log10(v)-log10(detection))
+aux logVV=log10(detection)+heav(vv-detection)*(log10(vv)-log10(detection))
+aux logVVV=log10(detection)+heav(vvv-detection)*(log10(vvv)-log10(detection))
+aux logVVVV=log10(detection)+heav(vvvv-detection)*(log10(vvvv)-log10(detection))
+
+@ total=90, dt=0.4, method=stiff
+@ bounds=1000000
+# @ NPLOT=4, yp1=logV, yp2=logVV, yp3=logVVV, yp4=logVVVV
+# @ NPLOT=2, yp1=F, yp2=FFFF
+@ NPLOT=2, yp1=logV, yp2=logVV
+
+done

@@ -1,0 +1,28 @@
+init u=4e+08, i=0, uu=4e+08, ii=0
+init v=0.31, tcell=1e+06, vv=0.31, ttcell=1e+06
+param beta=4.71e-08, delta=1.07
+param p=8.57, K=4e+08, c=2.4, ct=1.89e-06, st=1e+05, r=0.194, kt=1.26e+05, m=2, deltat=0.1 detection=100
+param ur=0.2, um=1.5
+ 
+# Original Response
+u'=-beta*u*v
+i'=beta*u*v-delta*i
+v'=p*v*(1-(v/K))-ct*v*tcell-c*v
+tcell'=st+r*tcell*((v^m)/((v^m)+(kt^m)))-deltat*tcell
+
+aux logV=log10(detection)+heav(v-detection)*(log10(v)-log10(detection))
+aux logtcell=6+heav(tcell-1e+06)*(log10(tcell)-6)
+
+# With Antiviral Drugs
+uu'=-beta*uu*vv
+ii'=beta*uu*vv-delta*ii
+vv'=(1-ur)*p*vv*(1-(vv/K))-ct*vv*ttcell-c*vv
+ttcell'=st+um*r*ttcell*((vv^m)/((vv^m)+(kt^m)))-deltat*ttcell
+
+aux logVV=log10(detection)+heav(vv-detection)*(log10(vv)-log10(detection))
+aux logttcell=6+heav(ttcell-1e+06)*(log10(ttcell)-6)
+
+@ total=20, dt=0.05, method=stiff
+@ bounds=100000000000
+@ NPLOT=2, yp1=logtcell, yp2=logttcell
+done
